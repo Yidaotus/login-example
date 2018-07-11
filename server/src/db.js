@@ -1,5 +1,5 @@
-// @TODO Wenn die Applikation wächst anstatt eine direkte Verbindung 
-// mit MySQL aufzubauen lieber ein ORM benutzen!
+// @TODO Anstatt eine direkte Verbindung mit MySQL aufzubauen
+// lieber ein ORM benutzen!
 const mysql = require('mysql')
 const config = require('config')
 

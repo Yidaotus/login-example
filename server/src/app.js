@@ -1,4 +1,3 @@
-console.log('hello')
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
@@ -11,11 +10,6 @@ app.use(morgan('combined'))
 // auf einem anderen port ausgeführt werden als unser Vue test server
 app.use(cors())
 app.use(bodyParser.json())
-
-// var dbHost = config.get('Database.host')
-// var dbPort = config.get('Database.port')
-// var dbUser = config.get('Database.username')
-// var dbPassword = config.get('Database.password')
 
 require('./routes')(app)
 
