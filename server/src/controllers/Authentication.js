@@ -1,4 +1,5 @@
 var db = require('../db')
+var Logger = require('../logger')
 
 module.exports = {
 /**
@@ -12,7 +13,8 @@ module.exports = {
  * @param res Das response Objekt für diese Schnitstelle
  */
   authenticate_user (req, res) {
-    var sql = 'SELECT * FROM users WHERE username = ?'
+    var logger = new Logger()
+    var sql = 'SELECT userId FROM users WHERE username = ?'
     // Formatiere die SQL Anfrage um den Input zu säubern
     sql = db.format(sql, req.body.username)
     db.query(sql, function (error, results, fields) {
@@ -21,10 +23,13 @@ module.exports = {
       // Benutzer existiert
       if (results.length) {
         // @TODO Session IDs vergeben
+        logger.logEvent(logger.EVENT['USER_LOGIN_SUCCESFUL'], results[0].userId, req.body.username)
         res.status(200).send({
-          user_exists: true
+          user_exists: true,
+          id: results[0].userId
         })
       } else {
+        logger.logEvent(logger.EVENT['USER_NOT_FOUND'], null, req.body.username)
         res.status(404).send({
           user_exists: false,
           error: 'This user does not exist'

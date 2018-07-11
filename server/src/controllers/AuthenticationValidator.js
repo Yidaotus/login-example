@@ -1,4 +1,5 @@
 const Joi = require('joi')
+var Logger = require('../logger')
 
 module.exports = {
   /**
@@ -13,10 +14,11 @@ module.exports = {
     const schema = {
       username: Joi.string().alphanum().min(3).max(42).required()
     }
-    const { error, value } = Joi.validate(req.body, schema)
+    const { error } = Joi.validate(req.body, schema)
 
     if (error) {
-      console.log(value)
+      var logger = new Logger()
+      logger.logEvent(logger.EVENT['USERNAME_NOT_VALID'], null, req.body.username)
       res.status(404).send({
         error: 'The username is not in the right format'
       })

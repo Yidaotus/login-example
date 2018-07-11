@@ -21,6 +21,7 @@ export default {
     return {
       User: {
         username: '',
+        id: null,
         loggedIn: false
       },
       error: null
@@ -30,11 +31,13 @@ export default {
     async authenticate () {
       if (!this.User.loggedIn) {
         try {
-          await Authentication.check_username({
+          let result = await Authentication.check_username({
             username: this.User.username
           })
+          console.log(result)
           this.error = null
           this.User.loggedIn = true
+          this.User.id = result.data.id
         } catch (error) {
           this.error = error.response.data.error
         }
