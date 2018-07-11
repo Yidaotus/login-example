@@ -11,13 +11,13 @@ module.exports = {
    */
   validate (req, res, next) {
     const schema = {
-      username: Joi.string().alphanum().min(5).max(42).required()
+      username: Joi.string().alphanum().min(3).max(42).required()
     }
     const { error, value } = Joi.validate(req.body, schema)
 
     if (error) {
       console.log(value)
-      res.status('404').send({
+      res.status(404).send({
         error: 'The username is not in the right format'
       })
     } else {

@@ -4,36 +4,56 @@
     <input
       type="text"
       name="username"
-      v-model="username"
+      v-model="User.username"
       placeholder="Dein Benutzername" />
     <br>
-    <!-- @click ist laut eslint für vue v-on:click vorzuziehen -->
-    <button
-      @click="authenticate">
-      Einloggen
-    </button>
+    <auth-button @click.native="authenticate" v-bind:isLoggedIn="User.loggedIn"/>
+  <div class="error" v-html="error" />
   </div>
 </template>
 
 <script>
 import Authentication from '@/services/Authentication'
+import AuthButton from '@/components/AuthButton.vue'
+
 export default {
   data () {
     return {
-      username: ''
+      User: {
+        username: '',
+        loggedIn: false
+      },
+      error: null
     }
   },
   methods: {
     async authenticate () {
-      const responce = await Authentication.check_username({
-        username: this.username
-      })
-      console.log(responce.data)
+      if (!this.User.loggedIn) {
+        try {
+          await Authentication.check_username({
+            username: this.User.username
+          })
+          this.error = null
+          this.User.loggedIn = true
+        } catch (error) {
+          this.error = error.response.data.error
+        }
+      } else {
+        this.User.loggedIn = false
+      }
+    },
+    deauthenticate () {
     }
+  },
+  components: {
+    'auth-button': AuthButton
   }
 }
+
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.error {
+  color: red;
+}
 </style>
