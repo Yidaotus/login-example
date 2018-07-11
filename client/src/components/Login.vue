@@ -7,6 +7,7 @@
       v-model="username"
       placeholder="Dein Benutzername" />
     <br>
+    <!-- @click ist laut eslint für vue v-on:click vorzuziehen -->
     <button
       @click="authenticate">
       Einloggen

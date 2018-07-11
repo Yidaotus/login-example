@@ -1,0 +1,9 @@
+{
+  "Database": {
+    "host": "localhost",
+    "port": 3306,
+    "username": "loginapplication",
+    "password": "ltsQLto3P4wl9o4JFdc2ZyPwApxEQOCe8K",
+    "database": "loginexample"
+  }
+}
