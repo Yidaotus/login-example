@@ -1,5 +1,5 @@
-// @TODO Anstatt eine direkte Verbindung mit MySQL aufzubauen
-// lieber ein ORM benutzen!
+// @TODO Sollte die Codebase eine gewisse größe erreichen
+// lieber auf ein ORM umsteigen
 const mysql = require('mysql')
 const config = require('config')
 

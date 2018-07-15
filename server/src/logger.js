@@ -6,7 +6,7 @@ const config = require('config')
  * Geschrieben im Factory Function style.
  *
  * @param dbTable in welcher Tabelle die Events gespeichert werden sollen.
- * 
+ *
  * @author Daniel Voigt <D.Voigt1993@gmail.com>
  */
 function Logger (dbTable) {
@@ -44,14 +44,15 @@ Logger.prototype.logEvent = function (eventId, userId, userName) {
         break
     }
     var sql = 'INSERT INTO ?? (`eventId`, `userId`) VALUES (?, ?)'
-    db.query(sql, [this.dbTable, eventId, userId], function (error, results, fields) {
-      if (error) {
-        throw (error)
-      }
+    var query = db.format(sql, [this.dbTable, eventId, userId])
+    db.query(query, function (error, results, fields) {
+      if (error) throw (error)
     })
   } else {
     throw new Error('Unknown event type')
   }
 }
 
-module.exports = Logger
+// Module werden gecached und sind statefull von daher können wir
+// ein Objekt der Klasse zurückgeben und mehrmals importieren
+module.exports = new Logger()

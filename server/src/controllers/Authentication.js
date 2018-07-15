@@ -1,8 +1,10 @@
 var db = require('../db')
-var Logger = require('../logger')
+var logger = require('../logger')
 var User = require('../models/User')
 
 /**
+ * @TODO Echtes Session handling
+ *
  * @author Daniel Voigt <D.Voigt1993@gmail.com>
  */
 module.exports = {
@@ -18,8 +20,6 @@ module.exports = {
    * @param res Das response Objekt für diese Schnitstelle
    */
   authenticate_user (req, res) {
-    var logger = new Logger()
-
     User.findByUsername(req.body.username, db, function (user) {
       if (user) {
         logger.logEvent(logger.EVENT['USER_LOGIN_SUCCESFUL'], user.id, user.username)
@@ -41,7 +41,6 @@ module.exports = {
    * @param res Das response Objekt für diese Schnitstelle
    */
   deauthenticate_user (req, res) {
-    var logger = new Logger()
     logger.logEvent(logger.EVENT['USER_LOGOUT'], req.body.userId, req.body.username)
     res.status(200).send({
     })

@@ -1,7 +1,7 @@
 /**
  * Model unserer User.
  * Geschrieben im ES6 Class style
- * 
+ *
  * @author Daniel Voigt <D.Voigt1993@gmail.com>
  */
 class User {
@@ -72,16 +72,18 @@ class User {
     // Formatiere die SQL Anfrage um den Input zu säubern
     sql = db.format(sql, username)
     db.query(sql, function (error, results, fields) {
+      var user = null
       if (error) {
-        callback(error)
+        console.log(error)
+        callback(user)
       }
 
       // Benutzer existiert
       if (results.length) {
-        callback(new User(results[0].userId, results[0].username))
-      } else {
-        callback(null)
+        user = new User(results[0].userId, results[0].username)
       }
+
+      callback(user)
     })
   }
 }

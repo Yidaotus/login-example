@@ -1,5 +1,5 @@
 <template>
-  <button class="button" :class="{loggedIn: isLoggedIn, loggedOut: !isLoggedIn}">
+  <button type="submit" class="button" :disabled="loading" :class="{loggedIn: isLoggedIn, loggedOut: !isLoggedIn}">
     {{ status }}
   </button>
 </template>
@@ -11,11 +11,17 @@ export default {
       type: Boolean,
       required: true,
       default: false
+    },
+    loading: {
+      type: Boolean,
+      required: true,
+      default: false
     }
   },
   computed: {
     status: function () {
-      return (this.isLoggedIn) ? 'Logout' : 'Login'
+      if (this.loading) return '...'
+      else return (this.isLoggedIn) ? 'Logout' : 'Login'
     }
   }
 }
@@ -31,6 +37,10 @@ export default {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+}
+
+.button:disabled {
+  background-color: grey;
 }
 
 .loggedIn {

@@ -8,11 +8,14 @@
         class="txt_input"
         type="text"
         name="username"
+        pattern="[A-Z;a-z;0-9]{4,42}"
+        title="Der Benutzername darf nur aus Alphanumerischen Zeichen bestehen und zwischen 4 und 42 Zeichen lang sein."
+        required
         v-model="loginform.username"
         :readonly="(user)"
         placeholder="Dein Benutzername" />
       <br>
-      <auth-button @click="authenticate" :isLoggedIn="this.user != null"/>
+      <auth-button :loading="loginform.loading" :isLoggedIn="this.user != null"/>
       <messagebox v-show="loginform.message.visible" :msgType="loginform.message.type"> {{ loginform.message.msg }} </messagebox>
     </form>
   </div>
@@ -36,12 +39,13 @@ export default {
     /**
      * Versuche den Benutzer des LoginForms zu authentifizieren.
      */
-    async authenticate () {
+    authenticate () {
       // Stoppe Timeout einer vorherigen Nachricht
       if (this.to) {
         clearTimeout(this.to)
       }
-
+      // Sollte ein user vorhanden sein logge diesen aus wenn nicht versuche
+      // den User anhand des Benuternamen einzuloggen
       if (!this.user) {
         this.loginform.authenticate().then((user) => { this.user = user })
       } else {

@@ -1,26 +1,24 @@
 import Authentication from '@/services/Authentication'
 import User from '@/classes/User'
+import Message from '@/classes/Message'
 
 /**
  * Ein LoginForm für Benutzer authentifizierung.
- * 
+ *
  * @author Daniel Voigt <D.Voigt1993@gmail.com>
  */
 class LoginForm {
   constructor () {
     this.username = ''
     this.message = new Message()
+    this.loading = false
   }
 
   /**
    * Versuche den Benutzer anhand des Usernamen zu authentifizieren.
    */
   async authenticate () {
-    if (this.username.length <= 0) {
-      this.message = new Message(true, 'error', 'Bitte gib deinen Benutzernamen ein!')
-      return null
-    }
-
+    this.loading = true
     var user = null
     try {
       let result = await Authentication.authenticate({
@@ -30,8 +28,10 @@ class LoginForm {
 
       this.message = new Message(true, 'notice', 'Erfolgreich angemeldet')
     } catch (error) {
-      this.message = new Message(true, 'error', error.response.data.error)
+      if (error.response) this.message = new Message(true, 'error', error.response.data.error)
+      else this.message = new Message(true, 'error', 'Der Server ist momentan nicht erreichbar')
     }
+    this.loading = false
     return user
   }
 
@@ -41,28 +41,13 @@ class LoginForm {
    * @param user der angemeldete Benutzer
    */
   async deauthenticate (user) {
+    this.loading = true
     await Authentication.deauthenticate({
       userId: user.id,
       username: user.username
     })
+    this.loading = false
     this.message = new Message(true, 'notice', 'Erfolgreich ausgeloggt')
-  }
-}
-
-/**
- * Message Objekt welches je nach Antwort der API generiert wird
- */
-class Message {
-  /**
-   * 
-   * @param visible Gibt an ob die Nachricht angezeigt werden soll
-   * @param type Der Typ der Nachricht (error, notice)
-   * @param msg Der Text der Nachricht
-   */
-  constructor (visible, type, msg) {
-    this.visible = visible || false
-    this.type = type || 'notice'
-    this.msg = msg || ''
   }
 }
 
