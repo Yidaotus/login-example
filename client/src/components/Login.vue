@@ -1,62 +1,86 @@
 <template>
   <div>
     <h1>Login</h1>
-    <input
-      type="text"
-      name="username"
-      v-model="User.username"
-      placeholder="Dein Benutzername" />
-    <br>
-    <auth-button @click.native="authenticate" v-bind:isLoggedIn="User.loggedIn"/>
-  <div class="error" v-html="error" />
+    <form class="login_form" v-on:submit.prevent="authenticate">
+      <label class="txt_label" for="txt_username">Dein Benutzername</label>
+      <input
+        id="txt_username"
+        class="txt_input"
+        type="text"
+        name="username"
+        v-model="loginform.username"
+        :readonly="(user)"
+        placeholder="Dein Benutzername" />
+      <br>
+      <auth-button @click="authenticate" :isLoggedIn="this.user != null"/>
+      <messagebox v-show="loginform.message.visible" :msgType="loginform.message.type"> {{ loginform.message.msg }} </messagebox>
+    </form>
   </div>
 </template>
 
 <script>
-import Authentication from '@/services/Authentication'
 import AuthButton from '@/components/AuthButton.vue'
+import Messagebox from '@/components/Messagebox.vue'
+
+import LoginForm from '@/classes/LoginForm'
 
 export default {
   data () {
     return {
-      User: {
-        username: '',
-        id: null,
-        loggedIn: false
-      },
-      error: null
+      loginform: new LoginForm(),
+      user: null
     }
   },
+
   methods: {
+    /**
+     * Versuche den Benutzer des LoginForms zu authentifizieren.
+     */
     async authenticate () {
-      if (!this.User.loggedIn) {
-        try {
-          let result = await Authentication.check_username({
-            username: this.User.username
-          })
-          console.log(result)
-          this.error = null
-          this.User.loggedIn = true
-          this.User.id = result.data.id
-        } catch (error) {
-          this.error = error.response.data.error
-        }
-      } else {
-        this.User.loggedIn = false
+      // Stoppe Timeout einer vorherigen Nachricht
+      if (this.to) {
+        clearTimeout(this.to)
       }
-    },
-    deauthenticate () {
+
+      if (!this.user) {
+        this.loginform.authenticate().then((user) => { this.user = user })
+      } else {
+        this.loginform.deauthenticate(this.user).then(() => { this.user = null })
+      }
+      // Blende Nachricht aus nach 5 Sekunden
+      this.to = setTimeout(() => (this.loginform.message.visible = false), 5000)
     }
   },
+
   components: {
-    'auth-button': AuthButton
+    'auth-button': AuthButton,
+    'messagebox': Messagebox
   }
 }
 
 </script>
 
 <style scoped>
-.error {
-  color: red;
+.login_form {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.txt_input {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.txt_label {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    box-sizing: border-box;
 }
 </style>

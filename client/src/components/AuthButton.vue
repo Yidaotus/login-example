@@ -1,25 +1,43 @@
 <template>
-  <button class="button" v-bind:class="{ loggedIn: isLoggedIn, loggedOut: !isLoggedIn}">
-    <template v-if="isLoggedIn">Logout</template>
-    <template v-else>Login</template>
+  <button class="button" :class="{loggedIn: isLoggedIn, loggedOut: !isLoggedIn}">
+    {{ status }}
   </button>
 </template>
 
 <script>
 export default {
   props: {
-    isLoggedIn: false
+    isLoggedIn: {
+      type: Boolean,
+      required: true,
+      default: false
+    }
+  },
+  computed: {
+    status: function () {
+      return (this.isLoggedIn) ? 'Logout' : 'Login'
+    }
   }
 }
-
 </script>
 
 <style scoped>
+.button {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
 .loggedIn {
-  background-color: green;
+  background-color: #4CAF50;
 }
 
 .loggedOut {
-  background-color: gray;
+  background-color: #5C5FF0;
 }
 </style>
